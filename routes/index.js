@@ -50,43 +50,6 @@ router.get('/user', function (req, res, next) {
         })
 });
 
-// router.get('/user', function (req, res, next) {
-//     // ket noi toi collection ten la users
-//     var connectUsers = db.model('users', user);
-//     connectUsers.find({},
-//         function (error, user) {
-//             if (error) {
-//                 console.log(error)
-//                 res.render('index', {title: 'Express : Loi'})
-//             } else {
-//                 data = '<table border="1" style="border-collapse:collapse" cellspacing="5" cellpadding="15">';
-//                 data += '<tr>' +
-//                     '<th>Avatar</th>' +
-//                     '<th>Name</th>' +
-//                     '<th>Date</th>' +
-//                     '<th>Sex</th>' +
-//                     '<th>Number Phone</th>' +
-//                     '<th>Hobby</th>' +
-//                     '</tr>';
-//                 user.forEach(function (row) {
-//                     data += '<tr>';
-//                     data += '<td>' + row.avatar + '</td>';
-//                     data += '<td>' + row.name + '</td>';
-//                     data += '<td>' + row.date + '</td>';
-//                     data += '<td>' + row.sex + '</td>';
-//                     data += '<td>' + row.phone + '</td>';
-//                     data += '<td>' + row.hobby + '</td>';
-//                     data += '</tr>';
-//                 });
-//                 data += '</table>';
-//                 res.writeHead(200, {'Content-Type': 'text/html'});
-//                 res.end(data);
-//                 res.render('index', {title: 'Express', users: user})
-//             }
-//         })
-// });
-
-
 let baseJson = {
     errorCode: undefined,
     errorMassage: undefined,
@@ -130,54 +93,41 @@ router.post('/addusers', upload.single('avatar'), function (req, res) {
     })
 })
 
-router.post('/delete', function (req, res) {
-    var connectUsers = db.model('users', user);
-    console.log(req.body._id)
-    connectUsers.remove({ _id: req.body._id }, function (err) {
+router.post("/updateusers", function (req, res, next) {
+    var obj = {
+        name: req.body.name,
+        date: req.body.date,
+        sex: req.body.sex,
+        phone: req.body.phone,
+        description: req.body.description,
+        hobby: req.body.hobby,
+    }
+    var connectUser = db.model("users", user)
+    connectUser.updateOne({ _id: req.body._id }, { $set: obj }, function (err) {
         if (err) {
             console.log(err)
         }
         else {
-            connectUsers.find({},
-                function (error, user) {
-                    if (error) {
-                        console.log(error)
-                        res.render('user', {title: 'Express : Loi'})
-                    } else {
-                        res.render('user', {title: 'Express', users: user})
-                    }
-                })
+            connectUser.find({}).then(users => {
+                res.render("user", { text: "List Update", users: users.map(obj => obj.toJSON(obj)) })
+            })
         }
     })
-
 })
 
-// router.put('/user', function (req, res){
-//     var deleteUsers = db.model('users', user);
-//     deleteUsers.deleteOne({ _id: req.body._id }, function (err, user) {
-//         console.log("Deleted");
-//         res.redirect("/users");
-//     });
-// })
+router.post("/deleteUsers", function (req, res, next) {
+    var connectUser = db.model("users", user)
+    connectUser.remove({ _id: req.body._id }, function (err) {
+        if (err) {
+            console.log(err)
+        }
+        else {
+            connectUser.find({}).then(users => {
+                res.render("user", { text: "List Delete", users: users.map(obj => obj.toJSON(obj)) })
+            })
+        }
+    })
+})
 
-// router.put('/user', function (req, res){
-//     var updateUsers = db.model('users', user);
-//         updateUsers.findById(req.params._id);
-//         updateUsers.set(req.body);
-//         var result = updateUsers.save();
-//         res.send(result);
-//     if (error) {
-//         res.status(500).send(error);
-//     }
-// });
-//
-// router.delete('/user', function (req, res) {
-//         var deleteUsers = db.model('users', user);
-//         deleteUsers.deleteOne({ _id: req.params._id }).exec();
-//         response.send(deleteUsers);
-//     if (error) {
-//         res.status(500).send(error);
-//     }
-// });
 
 module.exports = router;

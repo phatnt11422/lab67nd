@@ -51,8 +51,10 @@
                         <td>{{this.phone}}</td>
                         <td>{{this.hobby}}</td>
                         <td>
-                            <form action="/updateusers" enctype="multipart/form-data" method="post"><button type="submit">Update</button></form>
-                            <form action="/delete" method="post">
+                            <form action="/updateusers" method="post">
+                                <button type="submit">Update</button>
+                            </form>
+                            <form action="/deleteUsers" method="post">
                                 <button type="submit" name="_id" value="{{this._id}}">Delete</button>
                             </form>
                         </td>
