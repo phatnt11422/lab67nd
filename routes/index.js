@@ -1,5 +1,6 @@
 var express = require('express');
 var router = express.Router();
+var path1 = require('path');
 
 // thay the duong dan mongo cua cac ban
 var urlDB = 'mongodb+srv://admin:admin@cluster0.9q4s9.mongodb.net/Tinder?retryWrites=true&w=majority';
@@ -15,7 +16,16 @@ db.once('open', function () {
 
 var multer = require('multer')
 var path = 'uploads/'
-var upload = multer({dest: path})
+var storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+        cb(null, 'uploads/')
+    },
+    filename: function (req, file, cb) {
+        cb(null, file.fieldname + '-' + Date.now()+'-'+file.originalname)
+    }
+})
+
+var upload = multer({ storage: storage })
 // username
 // password
 // name
@@ -83,7 +93,7 @@ router.post('/addusers', upload.single('avatar'), function (req, res) {
         phone: req.body.phone,
         description: req.body.description,
         hobby: req.body.hobby,
-        avatar: req.file.filename + '.jpg'
+        avatar: req.file.filename
     }).save(function (error) {
         if (error) {
             res.render('addusers', {title: 'Express Loi!'});
@@ -93,7 +103,7 @@ router.post('/addusers', upload.single('avatar'), function (req, res) {
     })
 })
 
-router.post("/updateusers", function (req, res, next) {
+router.post("/updateusers",upload.single('avatar'), function (req, res, next) {
     var obj = {
         name: req.body.name,
         date: req.body.date,
@@ -101,20 +111,22 @@ router.post("/updateusers", function (req, res, next) {
         phone: req.body.phone,
         description: req.body.description,
         hobby: req.body.hobby,
+        avatar: req.file.filename
     }
     var connectUser = db.model("users", user)
-    connectUser.updateOne({ _id: req.body._id }, { $set: obj }, function (err) {
+    connectUser.updateOne({ _id: req.body._id },  obj , function (err) {
         if (err) {
             console.log(err)
         }
         else {
-            connectUser.find({}).then(users => {
-                res.render("user", { text: "List Update", users: users.map(obj => obj.toJSON(obj)) })
-            })
+           res.redirect('/user')
         }
     })
 })
 
+router.get("/updateusers",upload.single('avatar'), function (req, res, next) {
+    res.render('updateusers',{_id:req.query._id})
+})
 router.post("/deleteUsers", function (req, res, next) {
     var connectUser = db.model("users", user)
     connectUser.remove({ _id: req.body._id }, function (err) {

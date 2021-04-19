@@ -1,7 +1,8 @@
 <section class="login-clean">
     <h1 align="center">FORM UPDATE USER</h1>
-    <form action="/updateusers" enctype="multipart/form-data" method="post">
+    <form action="/updateusers"  enctype="multipart/form-data"  method="post">
         <span>Họ tên</span><br>
+        <input hidden class="hoten" value="{{_id}}" name="_id" type="text" placeholder="..."><br>
         <input class="hoten" name="name" type="text" placeholder="..."><br>
         <span>Ngày sinh</span>
         <input class="date" name="date" type="text" placeholder="..."><br>

@@ -5,7 +5,7 @@
             <div class="collapse navbar-collapse" id="navcol-1">
                 <ul class="navbar-nav">
                     <li class="nav-item">
-                        <a class="navbar-brand" href="user">User</a>
+                        <a class="navbar-brand" href="/users">User</a>
                     </li>
                 </ul>
                 <form class="form-inline mr-auto" target="_self">
@@ -25,7 +25,7 @@
     <div class="container hero">
         <div class="row">
 
-            <form method="get" action="addusers">
+            <form method="get" action="/addusers">
                 <button class="add-content" type="submit">Thêm</button>
             </form>
 
@@ -44,15 +44,15 @@
                 <tbody class="listUser" >
                 {{#each users}}
                     <tr>
-                        <td><img src="{{this.avatar}}"></td>
+                        <td><img height="100" width="100" src="{{this.avatar}}"></td>
                         <td>{{this.name}}</td>
                         <td>{{this.date}}</td>
                         <td>{{this.sex}}</td>
                         <td>{{this.phone}}</td>
                         <td>{{this.hobby}}</td>
                         <td>
-                            <form action="/updateusers" method="post">
-                                <button type="submit">Update</button>
+                            <form action="/updateusers" method="get">
+                                <button type="submit" name="_id" value="{{this._id}}">Update</button>
                             </form>
                             <form action="/deleteUsers" method="post">
                                 <button type="submit" name="_id" value="{{this._id}}">Delete</button>
